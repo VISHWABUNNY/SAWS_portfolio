@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import './gallery.css'
 
 // Auto-load all media from src/assets/gallery/
@@ -12,18 +12,53 @@ const videoModules = import.meta.glob(
 )
 
 const images = Object.entries(imageModules).map(([path, mod]) => ({
-  type: 'image',
-  src: mod.default || mod,
-  name: path.split('/').pop(),
+  type: 'image', src: mod.default || mod, name: path.split('/').pop(),
 })).filter(i => i.src)
 
 const videos = Object.entries(videoModules).map(([path, mod]) => ({
-  type: 'video',
-  src: mod.default || mod,
-  name: path.split('/').pop(),
+  type: 'video', src: mod.default || mod, name: path.split('/').pop(),
 })).filter(v => v.src)
 
 const allMedia = [...images, ...videos]
+
+// Size classes cycling pattern — gives organic cluster feel
+const SIZE_PATTERN = ['wide', 'small', 'large', 'tall', 'small', 'xlwide', 'small', 'tall']
+
+function getSizeClass(index, type) {
+  if (type === 'video') {
+    // Videos are always large tiles
+    return index % 2 === 0 ? 'large' : 'wide'
+  }
+  return SIZE_PATTERN[index % SIZE_PATTERN.length]
+}
+
+// Video component with IntersectionObserver autoplay (only plays when visible)
+function VideoTile({ src, name, onClick }) {
+  const ref = useRef(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) el.play().catch(() => {})
+        else { el.pause(); el.currentTime = 0 }
+      },
+      { threshold: 0.4 }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+
+  return (
+    <video
+      ref={ref}
+      src={src}
+      className="gallery-media"
+      muted loop playsInline preload="metadata"
+    />
+  )
+}
 
 export default function Gallery() {
   const [lightbox, setLightbox] = useState(null)
@@ -31,7 +66,7 @@ export default function Gallery() {
   return (
     <div className="gallery-app">
 
-      {/* ── NAV ── */}
+      {/* NAV */}
       <header className="gallery-nav">
         <a href="/" className="gallery-back">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -43,14 +78,14 @@ export default function Gallery() {
         <div />
       </header>
 
-      {/* ── HEADER ── */}
+      {/* HEADER */}
       <div className="gallery-header">
         <span className="gallery-eyebrow">NEEMUS · SAWS PROJECT</span>
         <h1 className="gallery-title">GALLERY</h1>
         <p className="gallery-count">{allMedia.length} ASSET{allMedia.length !== 1 ? 'S' : ''}</p>
       </div>
 
-      {/* ── GRID ── */}
+      {/* CLUSTER GRID */}
       {allMedia.length === 0 ? (
         <div className="gallery-empty">
           <div className="gallery-empty-icon">⬡</div>
@@ -58,36 +93,30 @@ export default function Gallery() {
           <span>Place images or videos in <code>src/assets/gallery/</code></span>
         </div>
       ) : (
-        <div className="gallery-grid">
-          {allMedia.map((item, i) => (
-            <div
-              className="gallery-item"
-              key={i}
-              onClick={() => item.type === 'image' && setLightbox(item)}
-            >
-              {item.type === 'image' ? (
-                <img src={item.src} alt={item.name} className="gallery-media" loading="lazy" />
-              ) : (
-                <video
-                  src={item.src}
-                  className="gallery-media"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                />
-              )}
-              <div className="gallery-item-overlay">
-                <span className="gallery-item-name">{item.name}</span>
-                <span className="gallery-item-type">{item.type === 'video' ? '▶ VIDEO' : '⊞ IMAGE'}</span>
+        <div className="gallery-cluster">
+          {allMedia.map((item, i) => {
+            const size = getSizeClass(i, item.type)
+            return (
+              <div
+                key={i}
+                className={`gallery-cell gallery-cell--${size} ${item.type === 'video' ? 'gallery-cell--video' : ''}`}
+                onClick={() => item.type === 'image' && setLightbox(item)}
+              >
+                {item.type === 'image' ? (
+                  <img src={item.src} alt={item.name} className="gallery-media" loading="lazy" />
+                ) : (
+                  <VideoTile src={item.src} name={item.name} />
+                )}
+                <div className="gallery-cell-overlay">
+                  <span className="gallery-cell-type">{item.type === 'video' ? '▶' : '⊞'}</span>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
 
-      {/* ── LIGHTBOX ── */}
+      {/* LIGHTBOX */}
       {lightbox && (
         <div className="lightbox" onClick={() => setLightbox(null)}>
           <button className="lightbox-close" onClick={() => setLightbox(null)}>✕</button>

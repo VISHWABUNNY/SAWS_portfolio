@@ -1,10 +1,23 @@
-import React, { Suspense, useState } from 'react'
+import React, { Suspense, useState, Component } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, useGLTF, Html, Center } from '@react-three/drei'
 
 const MODEL_URL = '/assets/industrial machine 3d model_Clone1.glb'
 
-/* WebGL check removed — R3F handles errors internally */
+/* WebGL ErrorBoundary — catches context loss crashes, shows reload button */
+class CanvasErrorBoundary extends Component {
+  constructor(props) { super(props); this.state = { failed: false } }
+  static getDerivedStateFromError() { return { failed: true } }
+  render() {
+    if (this.state.failed) return (
+      <div className="webgl-error">
+        <p>3D viewer unavailable</p>
+        <button onClick={() => window.location.reload()}>↺ Reload page</button>
+      </div>
+    )
+    return this.props.children
+  }
+}
 
 function Model() {
   const { scene } = useGLTF(MODEL_URL)
@@ -65,17 +78,23 @@ export default function App() {
 
         {/* 3D Canvas — inside hero only */}
         <div className="hero-canvas">
-          <Canvas gl={{ alpha: true, antialias: true }} camera={{ position: [0, 1.0, 2.2], fov: 52 }}>
-            <Lights mode={lighting} />
-            <Suspense fallback={<Html center><div className="spinner" /></Html>}>
-              <Center><Model /></Center>
-            </Suspense>
-            <OrbitControls
-              autoRotate={autoRotate} autoRotateSpeed={1.0}
-              enablePan={false} enableZoom={false}
-              minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI / 1.6}
-            />
-          </Canvas>
+          <CanvasErrorBoundary>
+            <Canvas
+              gl={{ alpha: true, antialias: true }}
+              camera={{ position: [0, 1.0, 2.2], fov: 52 }}
+              frameloop="demand"
+            >
+              <Lights mode={lighting} />
+              <Suspense fallback={<Html center><div className="spinner" /></Html>}>
+                <Center><Model /></Center>
+              </Suspense>
+              <OrbitControls
+                autoRotate={autoRotate} autoRotateSpeed={1.0}
+                enablePan={false} enableZoom={false}
+                minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI / 1.6}
+              />
+            </Canvas>
+          </CanvasErrorBoundary>
         </div>
 
         {/* Hero overlays */}
