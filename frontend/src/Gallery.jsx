@@ -74,7 +74,7 @@ export default function Gallery() {
           </svg>
           BACK
         </a>
-        <img src="./gallery/neemus black logo.png" alt="Neemus" className="gallery-logo" />
+        <img src="./assets/neemus black logo.png" alt="Neemus" className="gallery-logo" />
         <div />
       </header>
 
