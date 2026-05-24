@@ -10,7 +10,7 @@ const processedMedia = galleryList.map(filename => {
   const type = videoExtensions.includes(ext) ? 'video' : 'image'
   return {
     type,
-    src: `./gallery/${filename}`,
+    src: import.meta.env.BASE_URL + 'gallery/' + filename,
     name: filename
   }
 })
@@ -68,13 +68,13 @@ export default function Gallery() {
 
       {/* NAV */}
       <header className="gallery-nav">
-        <a href="./" className="gallery-back">
+        <a href={import.meta.env.BASE_URL} className="gallery-back">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="15 18 9 12 15 6" />
           </svg>
           BACK
         </a>
-        <img src="./assets/neemus black logo.png" alt="Neemus" className="gallery-logo" />
+        <img src={import.meta.env.BASE_URL + 'assets/neemus black logo.png'} alt="Neemus" className="gallery-logo" />
         <div />
       </header>
 
