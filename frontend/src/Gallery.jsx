@@ -19,7 +19,8 @@ const videos = Object.entries(videoModules).map(([path, mod]) => ({
   type: 'video', src: mod.default || mod, name: path.split('/').pop(),
 })).filter(v => v.src)
 
-const allMedia = [...images, ...videos]
+// Videos first, then images
+const allMedia = [...videos, ...images]
 
 // Size classes cycling pattern — gives organic cluster feel
 const SIZE_PATTERN = ['wide', 'small', 'large', 'tall', 'small', 'xlwide', 'small', 'tall']
