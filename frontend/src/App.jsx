@@ -2,7 +2,7 @@ import React, { Suspense, useState, Component } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, useGLTF, Html, Center } from '@react-three/drei'
 
-const MODEL_URL = '/assets/industrial machine 3d model_Clone1.glb'
+const MODEL_URL = './gallery/industrial machine 3d model_Clone1.glb'
 
 /* WebGL ErrorBoundary — catches context loss crashes, shows reload button */
 class CanvasErrorBoundary extends Component {
@@ -64,10 +64,10 @@ export default function App() {
 
       {/* ── NAVBAR ── */}
       <header className="navbar">
-        <img src="/assets/neemus black logo.png" alt="Neemus" className="nav-logo" />
+        <img src="./gallery/neemus black logo.png" alt="Neemus" className="nav-logo" />
         <nav className="nav-links">
           <a href="#specs"   className="nav-link">SPECS</a>
-          <a href="/gallery" className="nav-link">GALLERY</a>
+          <a href="./gallery" className="nav-link">GALLERY</a>
           <a href="#contact" className="nav-link">CONTACT</a>
         </nav>
       </header>
@@ -177,7 +177,7 @@ export default function App() {
       <footer className="site-footer" id="contact">
         <div className="footer-top">
           <span className="footer-brand">Neemus</span>
-          <img src="/assets/neemus-eagle.png" alt="" className="footer-eagle-img" aria-hidden="true" />
+          <img src="./gallery/neemus-eagle.png" alt="" className="footer-eagle-img" aria-hidden="true" />
         </div>
         <div className="footer-bottom">
           <div className="footer-col">

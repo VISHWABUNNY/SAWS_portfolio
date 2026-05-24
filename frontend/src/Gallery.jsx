@@ -1,23 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react'
 import './gallery.css'
 
-// Auto-load all media from src/assets/gallery/
-const imageModules = import.meta.glob(
-  './assets/gallery/*.{jpg,jpeg,JPG,JPEG,png,PNG,webp,WEBP,gif,GIF,avif,bmp,BMP}',
-  { eager: true }
-)
-const videoModules = import.meta.glob(
-  './assets/gallery/*.{mp4,MP4,webm,WEBM,mov,MOV,ogg,OGG}',
-  { eager: true }
-)
+import galleryList from './gallery-list.json'
 
-const images = Object.entries(imageModules).map(([path, mod]) => ({
-  type: 'image', src: mod.default || mod, name: path.split('/').pop(),
-})).filter(i => i.src)
+const videoExtensions = ['.mp4', '.webm', '.mov', '.ogg']
 
-const videos = Object.entries(videoModules).map(([path, mod]) => ({
-  type: 'video', src: mod.default || mod, name: path.split('/').pop(),
-})).filter(v => v.src)
+const processedMedia = galleryList.map(filename => {
+  const ext = '.' + filename.split('.').pop().toLowerCase()
+  const type = videoExtensions.includes(ext) ? 'video' : 'image'
+  return {
+    type,
+    src: `./gallery/${filename}`,
+    name: filename
+  }
+})
+
+const videos = processedMedia.filter(m => m.type === 'video')
+const images = processedMedia.filter(m => m.type === 'image')
 
 // Videos first, then images
 const allMedia = [...videos, ...images]
@@ -69,13 +68,13 @@ export default function Gallery() {
 
       {/* NAV */}
       <header className="gallery-nav">
-        <a href="/" className="gallery-back">
+        <a href="./" className="gallery-back">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="15 18 9 12 15 6" />
           </svg>
           BACK
         </a>
-        <img src="/assets/neemus black logo.png" alt="Neemus" className="gallery-logo" />
+        <img src="./gallery/neemus black logo.png" alt="Neemus" className="gallery-logo" />
         <div />
       </header>
 
