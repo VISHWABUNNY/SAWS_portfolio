@@ -24,7 +24,10 @@ body {
   font-family: var(--font-main);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  cursor: none;
 }
+
+*, *::before, *::after { cursor: none !important; }
 
 button, input, select, textarea { font: inherit; }
 
@@ -526,6 +529,40 @@ button, input, select, textarea { font: inherit; }
   font-size: 0.68rem;
   letter-spacing: 0.12em;
   color: rgba(255,255,255,0.25);
+}
+
+/* ── CUSTOM CURSOR ── */
+.saws-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 56px;
+  height: 56px;
+  margin-left: -28px;
+  margin-top: -28px;
+  pointer-events: none;
+  z-index: 999999;
+  opacity: 0;
+  transition: opacity 0.25s;
+  mix-blend-mode: difference;
+  color: white;
+  will-change: transform;
+}
+
+.saws-cursor svg {
+  display: block;
+  transition: transform 0.18s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Brackets close in slightly on hover over links/buttons */
+.saws-cursor.cursor--hover svg {
+  transform: scale(0.8);
+}
+
+/* Snap shut on click */
+.saws-cursor.cursor--click svg {
+  transform: scale(0.6);
+  transition: transform 0.08s ease;
 }
 
 /* ── RESPONSIVE ── */

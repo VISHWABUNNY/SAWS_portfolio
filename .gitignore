@@ -1,0 +1,6 @@
+# Large video files — exceed GitHub's 100 MB limit
+# Host these via Git LFS or an external CDN instead
+*.mp4
+*.mov
+*.avi
+*.mkv

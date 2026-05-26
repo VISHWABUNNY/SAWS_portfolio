@@ -1,6 +1,7 @@
 import React, { lazy, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 import './styles.css'
+import Cursor from './Cursor'
 
 const isGallery = window.location.pathname.includes('/gallery')
 
@@ -11,6 +12,7 @@ const Gallery = lazy(() => import('./Gallery'))
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
+    <Cursor />
     <Suspense fallback={<div style={{ minHeight: '100vh', background: '#0b0c0a' }} />}>
       {isGallery ? <Gallery /> : <App />}
     </Suspense>
